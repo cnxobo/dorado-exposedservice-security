@@ -3,18 +3,19 @@ package org.xobo.dorado.exposedservice.security.service.impl;
 import java.beans.Introspector;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAccessDecisionVoter;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAuthorizationService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceUrlCacheService;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceWhiteListProvider;
-import org.xobo.dorado.exposedservice.security.service.UrlAuthorizationProvider;
 
 import com.bstek.dorado.web.DoradoContext;
 
@@ -23,17 +24,17 @@ public class DoradoExposedServiceAuthorizationServiceImpl
   private static Logger logger =
       LoggerFactory.getLogger(DoradoExposedServiceAuthorizationServiceImpl.class);
 
-  private Collection<UrlAuthorizationProvider> urlAuthorizationProviders;
   private Set<String> whiteListSet;
+  private List<DoradoExposedServiceAccessDecisionVoter> doradoExposedServiceAccessDecisionVoterList;
 
-  private DoradoExposedServiceUrlCacheService doradoExposedServiceUrlCacheService;
 
   public DoradoExposedServiceAuthorizationServiceImpl(
-      DoradoExposedServiceUrlCacheService doradoExposedServiceUrlCacheService,
-      Collection<UrlAuthorizationProvider> urlAuthorizationProviders,
+      List<DoradoExposedServiceAccessDecisionVoter> doradoExposedServiceAccessDecisionVoterList,
       Collection<DoradoExposedServiceWhiteListProvider> doradoExposedServiceWhiteListProviders) {
-    this.doradoExposedServiceUrlCacheService = doradoExposedServiceUrlCacheService;
-    this.urlAuthorizationProviders = urlAuthorizationProviders;
+
+    AnnotationAwareOrderComparator.sort(doradoExposedServiceAccessDecisionVoterList);
+    this.doradoExposedServiceAccessDecisionVoterList = doradoExposedServiceAccessDecisionVoterList;
+    
     setWhilteList(doradoExposedServiceWhiteListProviders);
   }
 
@@ -54,8 +55,7 @@ public class DoradoExposedServiceAuthorizationServiceImpl
       return true;
     }
 
-    DoradoContext doradoContext = DoradoContext.getCurrent();
-    if (doradoContext == null) {
+    if (!isInDoradoContext()) {
       logger.error("doradoService {} not in doradocontext", doradoService);
       // 非 dorado 上下文，不做权限效验
       return true;
@@ -70,20 +70,25 @@ public class DoradoExposedServiceAuthorizationServiceImpl
     return authorization;
   }
 
+  private boolean isInDoradoContext() {
+    DoradoContext doradoContext = null;
+    try {
+      doradoContext = DoradoContext.getCurrent();
+    } catch (Exception e) {
+      logger.error("get dorado context error ", doradoContext);
+    }
+    return doradoContext != null;
+  }
+
 
   public boolean authorize(String doradoService) {
-    Collection<String> urls =
-        doradoExposedServiceUrlCacheService.findUrlsByDoradoServiceUrl(doradoService);
-    if (urls == null || urls.isEmpty()) {
-      logger.error("doradoService {} does not associate with url.", doradoService);
-      return true;
-    }
-    for (String url : urls) {
-      for (UrlAuthorizationProvider urlAuthorizationProvider : urlAuthorizationProviders) {
-        boolean authorization = urlAuthorizationProvider.authorize(url);
-        if (authorization) {
-          return true;
-        }
+
+    for (DoradoExposedServiceAccessDecisionVoter doradoExposedServiceAccessDecisionVoter : doradoExposedServiceAccessDecisionVoterList) {
+      int vote = doradoExposedServiceAccessDecisionVoter.vote(doradoService);
+      if (vote == DoradoExposedServiceAccessDecisionVoter.ACCESS_GRANTED) {
+        return true;
+      } else if (vote == DoradoExposedServiceAccessDecisionVoter.ACCESS_DENIED) {
+        return false;
       }
     }
     return false;
@@ -109,5 +114,6 @@ public class DoradoExposedServiceAuthorizationServiceImpl
     return StringUtils.isEmpty(beanName) ? Introspector.decapitalize(clazz.getSimpleName())
         : beanName;
   }
+
 
 }

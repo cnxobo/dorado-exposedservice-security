@@ -16,9 +16,10 @@ public class DoradoExposedServiceAspect {
     this.doradoExposedServiceAuthorizationService = doradoExposedServiceAuthorizationService;
   }
 
-  @Around(
-      value = "@annotation(com.bstek.dorado.annotation.DataProvider) || @annotation(com.bstek.dorado.annotation.DataResolver)|| @annotation(com.bstek.dorado.annotation.Expose)")
-  public void aroundExposedMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+  @Around(value = "@annotation(com.bstek.dorado.annotation.DataProvider)"
+      + "|| @annotation(com.bstek.dorado.annotation.DataResolver) "
+      + "|| @annotation(com.bstek.dorado.annotation.Expose)")
+  public Object aroundExposedMethod(ProceedingJoinPoint joinPoint) throws Throwable {
     Boolean authorization = false;
     try {
       authorization = doradoExposedServiceAuthorizationService.checkAuthorization(joinPoint);
@@ -28,10 +29,10 @@ public class DoradoExposedServiceAspect {
     }
 
     if (!authorization) {
-      return;
+      return null;
     }
 
-    joinPoint.proceed();
+    return joinPoint.proceed();
 
   }
 
