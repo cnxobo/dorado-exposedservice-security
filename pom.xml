@@ -6,9 +6,10 @@
 	<artifactId>dorado-exposedservice-security</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>dorado-exposedservice-security</name>
-	
+
 	<properties>
-			<aspectj.version>1.7.4</aspectj.version>
+		<aspectj.version>1.7.4</aspectj.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -48,8 +48,9 @@ public class DoradoExposedServiceSecurityConfiguration {
 
   @Bean
   public DoradoExposedServiceAspect doradoExposedServiceAspect(
+      @Value("${dorado.exposedservice.status:0}") int status,
       DoradoExposedServiceAuthorizationService doradoExposedServiceAuthorizationService) {
-    return new DoradoExposedServiceAspect(doradoExposedServiceAuthorizationService);
+    return new DoradoExposedServiceAspect(status, doradoExposedServiceAuthorizationService);
   }
 
   @Bean
