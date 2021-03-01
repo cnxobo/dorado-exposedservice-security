@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UrlRedirectFilter implements Filter {
 
+  /**
+   *  按URL长度，由长到短排列，以实现最大匹配子串优先。
+   */
   private Map<String, String> urlMapping = new TreeMap<String, String>(new Comparator<String>() {
     public int compare(String a, String b) {
       return b.length() - a.length();
@@ -39,8 +42,6 @@ public class UrlRedirectFilter implements Filter {
 
     if (req instanceof HttpServletRequest) {
       HttpServletRequest request = (HttpServletRequest) req;
-      // Getting servlet request URL
-      String url = request.getRequestURL().toString();
 
       // Getting servlet request query string.
       String queryString = request.getQueryString();
@@ -50,14 +51,8 @@ public class UrlRedirectFilter implements Filter {
 
       // Below we extract information about the request object path
       // information.
-      String scheme = request.getScheme();
-      String serverName = request.getServerName();
-      int portNumber = request.getServerPort();
-      String contextPath = request.getContextPath();
-      String servletPath = request.getServletPath();
-      String pathInfo = request.getPathInfo();
-      String query = request.getQueryString();
 
+      String contextPath = request.getContextPath();
 
       String myUri = uri.substring(request.getContextPath().length() + 1);
 
@@ -86,7 +81,6 @@ public class UrlRedirectFilter implements Filter {
         if (queryString != null) {
           targetUrl += "?" + queryString;
         }
-        System.out.println(targetUrl);
         ((HttpServletResponse) response).sendRedirect(targetUrl);
         return;
       }
