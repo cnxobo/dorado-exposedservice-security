@@ -30,6 +30,7 @@ import com.bstek.dorado.data.type.DataType;
 import com.bstek.dorado.data.type.EntityDataType;
 import com.bstek.dorado.data.type.property.Mapping;
 import com.bstek.dorado.data.type.property.PropertyDef;
+import com.bstek.dorado.data.type.property.Reference;
 import com.bstek.dorado.util.proxy.MethodInterceptorDispatcher;
 import com.bstek.dorado.view.View;
 import com.bstek.dorado.view.ViewState;
@@ -167,6 +168,16 @@ public class DoradoExposedServiceViewParserServiceImpl
 
           for (Entry<String, PropertyDef> entry : propertyDefMap.entrySet()) {
             PropertyDef propertyDef = entry.getValue();
+
+            if (propertyDef instanceof Reference) {
+              Reference reference = (Reference) propertyDef;
+              DataProvider dataProvider = reference.getDataProvider();
+              String doradoService = dataProvider.getId();
+              if (!StringUtils.isEmpty(doradoService) || doradoService.indexOf('#') >= 0) {
+                doradoServiceSet.add(doradoService);
+              }
+            }
+
             Mapping mapping = propertyDef.getMapping();
             if (mapping instanceof javassist.util.proxy.ProxyObject) {
               MethodHandler methodHandler =
