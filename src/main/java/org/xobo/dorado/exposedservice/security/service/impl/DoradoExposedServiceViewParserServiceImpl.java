@@ -172,6 +172,9 @@ public class DoradoExposedServiceViewParserServiceImpl
             if (propertyDef instanceof Reference) {
               Reference reference = (Reference) propertyDef;
               DataProvider dataProvider = reference.getDataProvider();
+              if (dataProvider == null) {
+                continue;
+              }
               String doradoService = dataProvider.getId();
               if (!StringUtils.isEmpty(doradoService) || doradoService.indexOf('#') >= 0) {
                 doradoServiceSet.add(doradoService);
@@ -205,7 +208,6 @@ public class DoradoExposedServiceViewParserServiceImpl
                   }
                 }
               }
-
             }
           }
 
