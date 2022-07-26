@@ -1,4 +1,4 @@
-package org.xobo.dorado.exposedservice.security.service;
+package org.xobo.dorado.exposedservice.security.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xobo.dorado.exposedservice.security.exception.AccessDeniedException;
+import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAuthorizationService;
 
 @Aspect
 public class DoradoExposedServiceAspect {
@@ -14,7 +15,7 @@ public class DoradoExposedServiceAspect {
 
   public DoradoExposedServiceAspect(int status,
       DoradoExposedServiceAuthorizationService doradoExposedServiceAuthorizationService) {
-    this.status = status;
+    this.errorHandle = status;
     this.doradoExposedServiceAuthorizationService = doradoExposedServiceAuthorizationService;
   }
 
@@ -32,12 +33,12 @@ public class DoradoExposedServiceAspect {
 
     if (!authorization) {
       logger.error("{} has no authorization", joinPoint.getSignature());
-      if (status == 0) {
+      if (errorHandle == 0) {
         logger.error("log only");
-      } else if (status == 1) {
-        logger.error("skip");
+      } else if (errorHandle == 1) {
+        logger.error("skip method invoke");
         return null;
-      } else if (status == 2) {
+      } else if (errorHandle == 2) {
         throw new AccessDeniedException("没有权限执行该方法");
       }
     }
@@ -51,6 +52,6 @@ public class DoradoExposedServiceAspect {
   /**
    * 0 只记录日志 1 跳过方法执行 2 抛出AccessDeniedException异常
    */
-  private int status;
+  private int errorHandle;
 
 }

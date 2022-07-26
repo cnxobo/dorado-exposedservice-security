@@ -13,10 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.xobo.dorado.exposedservice.security.api.DoradoExposedServiceWhiteListProvider;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAccessDecisionVoter;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAuthorizationService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceWhiteListProvider;
-
 import com.bstek.dorado.web.DoradoContext;
 
 public class DoradoExposedServiceAuthorizationServiceImpl
@@ -34,7 +33,7 @@ public class DoradoExposedServiceAuthorizationServiceImpl
 
     AnnotationAwareOrderComparator.sort(doradoExposedServiceAccessDecisionVoterList);
     this.doradoExposedServiceAccessDecisionVoterList = doradoExposedServiceAccessDecisionVoterList;
-    
+
     setWhilteList(doradoExposedServiceWhiteListProviders);
   }
 
@@ -56,14 +55,14 @@ public class DoradoExposedServiceAuthorizationServiceImpl
     }
 
     if (!isInDoradoContext()) {
-      logger.error("doradoService {} not in doradocontext", doradoService);
+      logger.debug("doradoService {} not in doradocontext", doradoService);
       // 非 dorado 上下文，不做权限效验
       return true;
     }
 
     boolean authorization = authorize(doradoService);
     if (!authorization) {
-      logger.error("doradoService {} no authorization.", doradoService);
+      logger.debug("doradoService {} no authorization.", doradoService);
     } else {
       logger.debug("doradoService {} has authorization.", doradoService);
     }
@@ -75,7 +74,7 @@ public class DoradoExposedServiceAuthorizationServiceImpl
     try {
       doradoContext = DoradoContext.getCurrent();
     } catch (Exception e) {
-      logger.error("get dorado context error ", doradoContext);
+      logger.debug("get dorado context error ", doradoContext);
     }
     return doradoContext != null;
   }

@@ -1,25 +1,15 @@
 package org.xobo.dorado.exposedservice.security.service.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.StringUtils;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceViewParserService;
-import org.xobo.dorado.exposedservice.security.service.DoradoUrlProvider;
+import org.xobo.dorado.exposedservice.security.api.DoradoUrlProvider;
+import org.xobo.dorado.exposedservice.security.api.ServiceUrlMappingProvider;
 import org.xobo.dorado.exposedservice.security.service.TravelComponentListener;
 import org.xobo.dorado.exposedservice.security.util.DoradoViewUtil;
-
 import com.bstek.dorado.config.ExpressionMethodInterceptor;
 import com.bstek.dorado.core.el.Expression;
 import com.bstek.dorado.data.provider.DataProvider;
@@ -43,11 +33,9 @@ import com.bstek.dorado.view.widget.action.AjaxAction;
 import com.bstek.dorado.view.widget.action.UpdateAction;
 import com.bstek.dorado.view.widget.data.DataSet;
 import com.bstek.dorado.web.DoradoContext;
-
 import javassist.util.proxy.MethodHandler;
 
-public class DoradoExposedServiceViewParserServiceImpl
-    implements DoradoExposedServiceViewParserService {
+public class DoradoExposedServiceViewParserServiceImpl implements ServiceUrlMappingProvider {
 
   private static Logger logger =
       LoggerFactory.getLogger(DoradoExposedServiceViewParserServiceImpl.class);
@@ -76,16 +64,12 @@ public class DoradoExposedServiceViewParserServiceImpl
     return doradoUrlSet;
   }
 
-  @CacheEvict(value = "xobo:dorado:security", key = "'SERVICE_URL_MAPPING'")
-  public void evictCache() {
-
-  }
-
-  @Cacheable(value = "xobo:dorado:security", key = "'SERVICE_URL_MAPPING'")
-  public Map<String, Collection<String>> loadCachedServiceUrlMapping() {
-    return loadServiceUrlMapping();
-  }
-
+  /**
+   * 返回dorado servive 对应URL映射关系。 key是dorado service 形如 demoController#hello； value是 dorado URL集合，形如
+   * ['aa.aaa.d', 'bb.bbb.d']。
+   * 
+   * @return dorado service map
+   */
   public Map<String, Collection<String>> loadServiceUrlMapping() {
     Map<String, Collection<String>> serviceUrlMapping = new HashMap<String, Collection<String>>();
     Collection<String> doradoUrls = loadDoradoUrl();
@@ -101,7 +85,6 @@ public class DoradoExposedServiceViewParserServiceImpl
         urlColl.add(url);
       }
     }
-
     return serviceUrlMapping;
   }
 
@@ -246,7 +229,5 @@ public class DoradoExposedServiceViewParserServiceImpl
     }
     return Collections.emptyList();
   }
-
-
 
 }

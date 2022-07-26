@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.xobo</groupId>
 	<artifactId>dorado-exposedservice-security</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>dorado-exposedservice-security</name>
 
 	<properties>
@@ -22,6 +22,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>4.3.17.RELEASE</version>
+			<scope>provided</scope>
 		</dependency>
 		<!-- AspectJ dependencies -->
 		<dependency>

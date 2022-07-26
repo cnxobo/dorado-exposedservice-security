@@ -3,7 +3,7 @@ package org.xobo.dorado.exposedservice.security.service.impl;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceUrlCacheService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceViewParserService;
+import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceViewMappingService;
 
 public class DoradoExposedServiceUrlCacheServiceImpl
     implements DoradoExposedServiceUrlCacheService {
@@ -16,10 +16,10 @@ public class DoradoExposedServiceUrlCacheServiceImpl
     }
   }
 
-  private DoradoExposedServiceViewParserService doradoExposedServiceViewParserService;
+  private DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService;
 
   public DoradoExposedServiceUrlCacheServiceImpl(
-      DoradoExposedServiceViewParserService doradoExposedServiceViewParserService) {
+      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService) {
     this.doradoExposedServiceViewParserService = doradoExposedServiceViewParserService;
   }
 

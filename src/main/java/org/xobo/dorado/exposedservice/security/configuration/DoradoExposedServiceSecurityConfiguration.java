@@ -2,27 +2,16 @@ package org.xobo.dorado.exposedservice.security.configuration;
 
 import java.util.Collection;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAccessDecisionVoter;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAspect;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAuthorizationService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceUrlCacheService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceViewParserService;
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceWhiteListProvider;
-import org.xobo.dorado.exposedservice.security.service.DoradoUrlProvider;
-import org.xobo.dorado.exposedservice.security.service.UrlAuthorizationProvider;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoExposedServiceAccessDecisionByUrlVoter;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoExposedServiceAuthorizationServiceImpl;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoExposedServiceUrlCacheServiceImpl;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoExposedServiceViewParserServiceImpl;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoExposedServiceWhiteListContainerProvider;
-import org.xobo.dorado.exposedservice.security.service.impl.DoradoUrlRedirectMappingProvider;
-
+import org.xobo.dorado.exposedservice.security.api.DoradoExposedServiceWhiteListProvider;
+import org.xobo.dorado.exposedservice.security.api.ServiceUrlMappingProvider;
+import org.xobo.dorado.exposedservice.security.api.UrlAuthorizationProvider;
+import org.xobo.dorado.exposedservice.security.aspect.DoradoExposedServiceAspect;
+import org.xobo.dorado.exposedservice.security.service.*;
+import org.xobo.dorado.exposedservice.security.service.impl.*;
 import com.bstek.dorado.view.manager.ViewConfigFactoryRegister;
-import com.bstek.dorado.view.manager.ViewConfigManager;
 
 @Configuration
 public class DoradoExposedServiceSecurityConfiguration {
@@ -36,14 +25,14 @@ public class DoradoExposedServiceSecurityConfiguration {
 
   @Bean
   public DoradoExposedServiceUrlCacheService DoradoExposedServiceUrlCacheService(
-      DoradoExposedServiceViewParserService doradoExposedServiceViewParserService) {
+      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService) {
     return new DoradoExposedServiceUrlCacheServiceImpl(doradoExposedServiceViewParserService);
   }
 
   @Bean
-  public DoradoExposedServiceViewParserService DoradoExposedServiceViewParserService(
-      ViewConfigManager viewConfigManager, Collection<DoradoUrlProvider> doradoUrlProviders) {
-    return new DoradoExposedServiceViewParserServiceImpl(viewConfigManager, doradoUrlProviders);
+  public DoradoExposedServiceViewMappingService DoradoExposedServiceViewParserService(
+      Collection<ServiceUrlMappingProvider> serviceUrlMappingProviders) {
+    return new DoradoExposedServiceViewServiceMappingImpl(serviceUrlMappingProviders);
   }
 
   @Bean

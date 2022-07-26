@@ -1,8 +1,7 @@
 package org.xobo.dorado.exposedservice.security.service.impl;
 
 import java.util.Collection;
-
-import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceWhiteListProvider;
+import org.xobo.dorado.exposedservice.security.api.DoradoExposedServiceWhiteListProvider;
 
 public class DoradoExposedServiceWhiteListContainerProvider
     implements DoradoExposedServiceWhiteListProvider {

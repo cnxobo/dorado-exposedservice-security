@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xobo.dorado.exposedservice.security.api.UrlAuthorizationProvider;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAccessDecisionVoter;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceUrlCacheService;
-import org.xobo.dorado.exposedservice.security.service.UrlAuthorizationProvider;
 
 public class DoradoExposedServiceAccessDecisionByUrlVoter
     implements DoradoExposedServiceAccessDecisionVoter {

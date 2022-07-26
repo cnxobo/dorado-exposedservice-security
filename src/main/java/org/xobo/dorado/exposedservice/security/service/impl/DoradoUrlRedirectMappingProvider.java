@@ -5,9 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.xobo.dorado.exposedservice.security.service.UrlRedirectMappingProvider;
-
 import com.bstek.dorado.view.config.XmlViewConfigDefinitionFactory;
 import com.bstek.dorado.view.manager.ViewConfigFactoryRegister;
 
