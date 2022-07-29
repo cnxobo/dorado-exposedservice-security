@@ -1,11 +1,8 @@
 package org.xobo.dorado.exposedservice.security.service.impl;
 
 import java.beans.Introspector;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
@@ -13,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.xobo.dorado.exposedservice.security.api.DoradoExposedServiceWhiteListProvider;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAccessDecisionVoter;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceAuthorizationService;
@@ -47,26 +46,28 @@ public class DoradoExposedServiceAuthorizationServiceImpl
 
 
   public Boolean checkAuthorization(ProceedingJoinPoint joinPoint) {
-    String doradoService = getDoradoService(joinPoint);
+    Collection<String> doradoServiceCollection = getDoradoService(joinPoint);
+    for (String doradoService : doradoServiceCollection) {
+      if (whiteListSet.contains(doradoService)) {
+        logger.debug("doradoService {} in whitelist", doradoService);
+        return true;
+      }
 
-    if (whiteListSet.contains(doradoService)) {
-      logger.debug("doradoService {} in whitelist", doradoService);
-      return true;
-    }
+      if (!isInDoradoContext()) {
+        logger.debug("doradoService {} not in doradocontext", doradoService);
+        // 非 dorado 上下文，不做权限效验
+        return true;
+      }
 
-    if (!isInDoradoContext()) {
-      logger.debug("doradoService {} not in doradocontext", doradoService);
-      // 非 dorado 上下文，不做权限效验
-      return true;
+      boolean authorization = authorize(doradoService);
+      if (authorization) {
+        logger.debug("doradoService {} has authorization.", doradoService);
+        return true;
+      } else {
+        logger.debug("doradoService {} no authorization.", doradoService);
+      }
     }
-
-    boolean authorization = authorize(doradoService);
-    if (!authorization) {
-      logger.debug("doradoService {} no authorization.", doradoService);
-    } else {
-      logger.debug("doradoService {} has authorization.", doradoService);
-    }
-    return authorization;
+    return false;
   }
 
   private boolean isInDoradoContext() {
@@ -93,10 +94,39 @@ public class DoradoExposedServiceAuthorizationServiceImpl
     return false;
   }
 
-  public String getDoradoService(JoinPoint joinPoint) {
-    String beanName = getBeanName(joinPoint.getTarget().getClass());
+  private Map<Class<?>, Collection<String>> classBeannameMapping =
+      new ConcurrentHashMap<Class<?>, Collection<String>>();
+
+  Collection<String> getBeanNames(Class<?> clazz) {
+    String[] beanNames = null;
+    WebApplicationContext webApplicationContext = WebApplicationContextUtils
+        .getWebApplicationContext(DoradoContext.getAttachedServletContext());
+
+    if (webApplicationContext != null) {
+      beanNames = webApplicationContext.getBeanNamesForType(clazz);
+    }
+
+    if (beanNames == null) {
+      beanNames = new String[] {getBeanName(clazz)};
+    }
+    return Arrays.asList(beanNames);
+  }
+
+  public Collection<String> getDoradoService(JoinPoint joinPoint) {
+    Class<?> clazz = joinPoint.getTarget().getClass();
+
+    Collection<String> beanNames = classBeannameMapping.get(clazz);
+    if (beanNames == null) {
+      beanNames = getBeanNames(clazz);
+      classBeannameMapping.put(clazz, beanNames);
+    }
+
     String methodName = joinPoint.getSignature().getName();
-    return beanName + "#" + methodName;
+    Collection<String> doradoServices = new ArrayList<String>(beanNames.size());
+    for (String beanName : beanNames) {
+      doradoServices.add(beanName + "#" + methodName);
+    }
+    return doradoServices;
   }
 
   public String getBeanName(Class<?> clazz) {

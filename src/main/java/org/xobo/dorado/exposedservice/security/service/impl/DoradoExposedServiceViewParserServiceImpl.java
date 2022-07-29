@@ -75,7 +75,13 @@ public class DoradoExposedServiceViewParserServiceImpl implements ServiceUrlMapp
     Collection<String> doradoUrls = loadDoradoUrl();
 
     for (String url : doradoUrls) {
-      Collection<String> services = loadDoradoService(url);
+      Collection<String> services = null;
+      try {
+        services = loadDoradoService(url);
+      } catch (Exception e) {
+        logger.error("load service error", e);
+        continue;
+      }
       for (String service : services) {
         Collection<String> urlColl = serviceUrlMapping.get(service);
         if (DoradoViewUtil.isEmpty(urlColl)) {
