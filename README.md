@@ -1,4 +1,4 @@
- dorado 安全框架设计
+ dorado 接口安全扩展
 
 dorado 封装了Ajax请求，导致在权限处理上与传统Web项目还是有很大的区别。dorado下，暴露一个服务可以通过`@Expose`、`@DataProvider`、`@DataResolver`等注解。
 
