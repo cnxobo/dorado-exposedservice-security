@@ -79,7 +79,8 @@ public class DoradoExposedServiceViewParserServiceImpl implements ServiceUrlMapp
       try {
         services = loadDoradoService(url);
       } catch (Exception e) {
-        logger.error("load service error", e);
+        logger.error("load {} service error: {}", url, e.toString());
+        logger.debug("StackTrace", e);
         continue;
       }
       for (String service : services) {

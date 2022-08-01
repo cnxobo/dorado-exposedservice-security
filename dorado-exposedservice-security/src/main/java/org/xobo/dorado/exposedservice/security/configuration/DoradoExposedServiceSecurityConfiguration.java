@@ -29,8 +29,10 @@ public class DoradoExposedServiceSecurityConfiguration {
 
   @Bean
   public DoradoExposedServiceUrlCacheService DoradoExposedServiceUrlCacheService(
-      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService) {
-    return new DoradoExposedServiceUrlCacheServiceImpl(doradoExposedServiceViewParserService);
+      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService,
+      @Value("${dorado.exposedservice.mapping.enablecache:true}") boolean enableCacheServiceUrl) {
+    return new DoradoExposedServiceUrlCacheServiceImpl(doradoExposedServiceViewParserService,
+        enableCacheServiceUrl);
   }
 
   @Bean
@@ -41,9 +43,9 @@ public class DoradoExposedServiceSecurityConfiguration {
 
   @Bean
   public DoradoExposedServiceAspect doradoExposedServiceAspect(
-      @Value("${dorado.exposedservice.status:0}") int status,
+      @Value("${dorado.exposedservice.errorhandle:0}") int errorHandle,
       DoradoExposedServiceAuthorizationService doradoExposedServiceAuthorizationService) {
-    return new DoradoExposedServiceAspect(status, doradoExposedServiceAuthorizationService);
+    return new DoradoExposedServiceAspect(errorHandle, doradoExposedServiceAuthorizationService);
   }
 
   @Bean

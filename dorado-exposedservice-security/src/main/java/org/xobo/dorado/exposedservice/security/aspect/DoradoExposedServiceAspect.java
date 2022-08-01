@@ -13,9 +13,9 @@ public class DoradoExposedServiceAspect {
 
   private static Logger logger = LoggerFactory.getLogger(DoradoExposedServiceAspect.class);
 
-  public DoradoExposedServiceAspect(int status,
+  public DoradoExposedServiceAspect(int errorHandle,
       DoradoExposedServiceAuthorizationService doradoExposedServiceAuthorizationService) {
-    this.errorHandle = status;
+    this.errorHandle = errorHandle;
     this.doradoExposedServiceAuthorizationService = doradoExposedServiceAuthorizationService;
   }
 

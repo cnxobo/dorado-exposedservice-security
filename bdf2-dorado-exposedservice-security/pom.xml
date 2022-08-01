@@ -19,14 +19,27 @@
   
   <repositories>
     <repository>
-      <id>ezy-repository</id>
-      <url>https://nexus.zyde.vip/repository/public/</url>
+      <id>xobo-repo</id>
+      <url>https://nexus.xobo.org/content/groups/public/</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>ezy-repository</id>
-      <url>https://nexus.zyde.vip/repository/public/</url>
+      <id>xobo-repo</id>
+      <url>https://nexus.xobo.org/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
+  
+  <distributionManagement>
+    <repository>
+      <id>xobo-repo</id>
+      <name>Nexus Release Repository</name>
+      <url>https://nexus.xobo.org/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>xobo-repo</id>
+      <name>Nexus Snapshot Repository</name>
+      <url>https://nexus.xobo.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

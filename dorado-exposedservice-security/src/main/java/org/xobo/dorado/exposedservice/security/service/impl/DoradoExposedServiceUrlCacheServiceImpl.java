@@ -1,7 +1,6 @@
 package org.xobo.dorado.exposedservice.security.service.impl;
 
 import java.util.Collection;
-import org.springframework.beans.factory.annotation.Value;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceUrlCacheService;
 import org.xobo.dorado.exposedservice.security.service.DoradoExposedServiceViewMappingService;
 
@@ -19,12 +18,17 @@ public class DoradoExposedServiceUrlCacheServiceImpl
   private DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService;
 
   public DoradoExposedServiceUrlCacheServiceImpl(
-      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService) {
+      DoradoExposedServiceViewMappingService doradoExposedServiceViewParserService,
+      boolean enableCacheServiceUrl) {
     this.doradoExposedServiceViewParserService = doradoExposedServiceViewParserService;
+    this.enableCacheServiceUrl = enableCacheServiceUrl;
   }
 
-  @Value("${dorado.exposedservice.mapping.enablecache:true}")
+
   private boolean enableCacheServiceUrl;
 
+  public void setEnableCacheServiceUrl(boolean enableCacheServiceUrl) {
+    this.enableCacheServiceUrl = enableCacheServiceUrl;
+  }
 
 }
