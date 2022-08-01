@@ -28,7 +28,7 @@ public class DoradoExposedServiceAspect {
       authorization = doradoExposedServiceAuthorizationService.checkAuthorization(joinPoint);
     } catch (Exception e) {
       logger.error("exception ", e);
-      authorization = true;
+      authorization = false;
     }
 
     if (!authorization) {
