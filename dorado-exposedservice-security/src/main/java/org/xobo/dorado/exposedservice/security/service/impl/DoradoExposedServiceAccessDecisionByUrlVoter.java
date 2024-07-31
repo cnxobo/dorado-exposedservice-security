@@ -31,7 +31,7 @@ public class DoradoExposedServiceAccessDecisionByUrlVoter
     Collection<String> urls =
         doradoExposedServiceUrlCacheService.findUrlsByDoradoServiceUrl(doradoService);
     if (urls == null || urls.isEmpty()) {
-      logger.error("doradoService {} does not associate with url.", doradoService);
+      logger.trace("doradoService {} does not associate with url.", doradoService);
       return ACCESS_GRANTED;
     }
 
